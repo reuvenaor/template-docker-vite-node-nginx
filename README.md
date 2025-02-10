@@ -14,11 +14,6 @@ docker compose -f compose.yaml up --build
 docker compose -f compose.dev.yaml up --build
 ```
 
-### Structure:
-
-- `client/`: Frontend code.
-- `server/`: Backend code.
-
 ### Environment Variables:
 
 - `PORT`: Port for the backend server.
