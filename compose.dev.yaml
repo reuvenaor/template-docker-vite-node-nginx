@@ -1,0 +1,48 @@
+services:
+  api:
+    build:
+      dockerfile: dev.Dockerfile
+      context: ./server
+    container_name: api
+    restart: on-failure
+    env_file: ./server/.env
+    volumes:
+      - /app/node_modules
+    ports:
+      - 3008:3008
+
+  client:
+    build:
+      dockerfile: dev.Dockerfile
+      context: ./client
+    container_name: client
+    restart: always
+    env_file: ./client/.env
+    environment:
+      - WDS_SOCKET_PORT=0
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - 3000:3000
+    depends_on:
+      - api
+  # # Uncomment this block to include nginx service in development. # #
+  # # ports should be removed from client and api services.         # #     
+  # nginx:
+  #   build:
+  #     dockerfile: dev.Dockerfile
+  #     context: ./nginx
+  #   container_name: nginx
+  #   restart: always
+  #   develop:
+  #     watch:
+  #       - action: sync+restart
+  #         path: ./nginx/nginx.conf
+  #         target: /etc/nginx/conf.d/default.conf
+  #   ports:
+  #     - 3000:80
+  #   depends_on:
+  #     - api
+  #     - client

@@ -1,0 +1,35 @@
+services:
+  api:
+    build:
+      dockerfile: prod.Dockerfile
+      context: ./server
+    container_name: api
+    restart: on-failure
+    env_file: ./server/.env.production
+    volumes:
+      - /app/node_modules
+
+  client:
+    build:
+      dockerfile: prod.Dockerfile
+      context: ./client
+    container_name: client
+    restart: on-failure
+    env_file: ./client/.env.production
+    environment:
+      - WDS_SOCKET_PORT=0
+    volumes:
+      - /app/node_modules
+    depends_on:
+      - api
+  nginx:
+    build:
+      dockerfile: prod.Dockerfile
+      context: ./nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - 3474:80
+    depends_on:
+      - api
+      - client
